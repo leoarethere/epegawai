@@ -21,29 +21,31 @@ class AuthController extends Controller
     // 2. Proses Login (Support NIP atau NIK)
     public function login(Request $request)
     {
-        // Validasi
+        // Validasi input
         $request->validate([
-            'nip'      => 'required|string', 
-            'password' => 'required|string', 
+            'nip'      => 'required|string', // Field di form login bernama 'nip'
+            'password' => 'required|string',
         ]);
 
-        // Ambil kredensial
+        // Ambil input
         $identity = $request->nip;
         $password = $request->password;
         $remember = $request->has('remember');
 
-        // Tentukan apakah input ini NIK atau NIP (Cek panjang string atau is_numeric)
-        // NIK biasanya 16 digit, NIP 18 digit.
-        $fieldType = strlen($identity) == 16 ? 'nik' : 'nip';
-
-        // Coba Login sekali saja sesuai tipe yang terdeteksi
-        if (Auth::attempt([$fieldType => $identity, 'password' => $password], $remember)) {
+        // --- LOGIKA LOGIN ROBUST ---
+        
+        // Percobaan 1: Login menggunakan NIP
+        if (Auth::attempt(['nip' => $identity, 'password' => $password], $remember)) {
             return $this->handleSuccessfulLogin($request);
         }
 
-        // Jika tipe tidak terdeteksi pasti (misal panjangnya aneh), bisa fallback ke cara lama (cek dua kali)
-        // Tapi cara di atas lebih efisien database query-nya.
+        // Percobaan 2: Login menggunakan NIK (Jika NIP gagal)
+        if (Auth::attempt(['nik' => $identity, 'password' => $password], $remember)) {
+            return $this->handleSuccessfulLogin($request);
+        }
 
+        // --- JIKA KEDUANYA GAGAL ---
+        
         return back()->withErrors([
             'nip' => 'NIP/NIK atau password salah.',
         ])->onlyInput('nip');
@@ -57,9 +59,13 @@ class AuthController extends Controller
     }
 
     // 4. Helper: Redirect User Sesuai Role
-    // (Fungsi ini dipakai juga oleh Middleware agar konsisten)
     protected function redirectUser()
     {
+        // Pastikan user terautentikasi sebelum mengakses properti role
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $role = Auth::user()->role;
 
         if ($role === 'admin') {
@@ -70,9 +76,9 @@ class AuthController extends Controller
             return redirect()->route('pegawai.dashboard');
         }
 
-        // Jika role aneh/tidak dikenal, logout paksa
+        // Jika role tidak dikenali, logout paksa untuk keamanan
         Auth::logout();
-        return redirect()->route('login')->with('error', 'Role akun tidak dikenali.');
+        return redirect()->route('login')->with('error', 'Role akun tidak valid. Hubungi administrator.');
     }
 
     // 5. Logout

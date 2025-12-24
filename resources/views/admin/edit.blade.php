@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
     
-    {{-- HEADER: Tulisan Hitam & Nama Besar --}}
+    {{-- HEADER --}}
     <div class="flex justify-between items-start mb-8 border-b pb-4">
         <div>
             <h2 class="text-xl font-bold text-gray-800 mb-1">Form Edit Data Pegawai</h2>
@@ -93,6 +93,7 @@
                 <div class="bg-yellow-50 p-4 rounded-md border border-yellow-200 mt-2">
                     <label class="block mb-1 font-bold text-yellow-800 text-xs uppercase">Reset Password (Opsional)</label>
                     <input type="password" name="password" class="w-full border border-yellow-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-200 focus:border-yellow-500 bg-white" placeholder="Isi hanya jika ingin mengganti password lama...">
+                    <p class="text-xs text-yellow-700 mt-1"><i class="fas fa-info-circle mr-1"></i> Password harus berupa angka (PIN) minimal 6 digit</p>
                 </div>
             </div>
         </div>
@@ -101,13 +102,19 @@
         <h3 class="text-lg font-semibold text-blue-800 border-b pb-2 mb-4 mt-8">B. Data Pribadi</h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
-            <div><label class="block mb-1 font-medium text-gray-700 text-sm">Tempat Lahir</label><input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $pegawai->tempat_lahir) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm"></div>
-            <div><label class="block mb-1 font-medium text-gray-700 text-sm">Tanggal Lahir</label><input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pegawai->tanggal_lahir) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm"></div>
+            <div>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Tempat Lahir</label>
+                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $pegawai->tempat_lahir) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">
+            </div>
+            <div>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Tanggal Lahir</label>
+                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pegawai->tanggal_lahir ? $pegawai->tanggal_lahir->format('Y-m-d') : '') }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">
+            </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
             <div>
-                <label class="block mb-1 font-medium text-gray-700 text-sm">Jenis Kelamin *</label>
-                <select name="jenis_kelamin" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-white shadow-sm">
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Jenis Kelamin <span class="text-red-500">*</span></label>
+                <select name="jenis_kelamin" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-white shadow-sm" required>
                     <option value="Laki-laki" {{ old('jenis_kelamin', $pegawai->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                     <option value="Perempuan" {{ old('jenis_kelamin', $pegawai->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                 </select>
@@ -115,6 +122,7 @@
             <div>
                 <label class="block mb-1 font-medium text-gray-700 text-sm">Agama</label>
                 <select name="agama" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-white shadow-sm">
+                    <option value="">- Pilih Agama -</option>
                     @foreach(['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'] as $agama)
                         <option value="{{ $agama }}" {{ old('agama', $pegawai->agama) == $agama ? 'selected' : '' }}>{{ $agama }}</option>
                     @endforeach
@@ -122,12 +130,12 @@
             </div>
         </div>
 
-        {{-- BAGIAN C (DIPERBAIKI: Status Operasional Ditambahkan) --}}
+        {{-- BAGIAN C --}}
         <h3 class="text-lg font-semibold text-blue-800 border-b pb-2 mb-4 mt-8">C. Data Kepegawaian</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-                <label class="block mb-1 font-medium text-gray-700 text-sm">Status Pegawai *</label>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Status Pegawai <span class="text-red-500">*</span></label>
                 <select name="status_pegawai" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-white shadow-sm" required>
                     <option value="" disabled>-- Pilih Status --</option>
                     @foreach(['CPNS', 'PNS', 'PPPK', 'KONTRAK'] as $status)
@@ -135,9 +143,8 @@
                     @endforeach
                 </select>
             </div>
-            {{-- PERBAIKAN: Input Status Operasional Ditambahkan Kembali --}}
             <div>
-                <label class="block mb-1 font-medium text-gray-700 text-sm">Status Operasional *</label>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Status Operasional <span class="text-red-500">*</span></label>
                 <select name="status_operasional" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm bg-white shadow-sm" required>
                     <option value="Aktif" {{ old('status_operasional', $pegawai->status_operasional) == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                     <option value="Non-Aktif" {{ old('status_operasional', $pegawai->status_operasional) == 'Non-Aktif' ? 'selected' : '' }}>Non-Aktif</option>
@@ -146,11 +153,23 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-            <div><label class="block mb-1 font-medium text-gray-700 text-sm">Jabatan</label><input type="text" name="jabatan" value="{{ old('jabatan', $pegawai->jabatan) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm"></div>
-            <div><label class="block mb-1 font-medium text-gray-700 text-sm">Bagian / Divisi</label><input type="text" name="bagian" value="{{ old('bagian', $pegawai->bagian) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm"></div>
+            <div>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Jabatan</label>
+                <input type="text" name="jabatan" value="{{ old('jabatan', $pegawai->jabatan) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">
+            </div>
+            <div>
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Bagian / Divisi</label>
+                <input type="text" name="bagian" value="{{ old('bagian', $pegawai->bagian) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">
+            </div>
         </div>
-        <div class="mb-5"><label class="block mb-1 font-medium text-gray-700 text-sm">No Telepon / WA *</label><input type="number" name="telepon" value="{{ old('telepon', $pegawai->telepon) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm" required></div>
-        <div class="mb-5"><label class="block mb-1 font-medium text-gray-700 text-sm">Alamat Lengkap (KTP)</label><textarea name="alamat_ktp" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">{{ old('alamat_ktp', $pegawai->alamat_ktp) }}</textarea></div>
+        <div class="mb-5">
+            <label class="block mb-1 font-medium text-gray-700 text-sm">No Telepon / WA <span class="text-red-500">*</span></label>
+            <input type="number" name="telepon" value="{{ old('telepon', $pegawai->telepon) }}" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm" required>
+        </div>
+        <div class="mb-5">
+            <label class="block mb-1 font-medium text-gray-700 text-sm">Alamat Lengkap (KTP)</label>
+            <textarea name="alamat_ktp" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm shadow-sm">{{ old('alamat_ktp', $pegawai->alamat_ktp) }}</textarea>
+        </div>
 
 
         {{-- BAGIAN D --}}
@@ -191,18 +210,26 @@
                 </div>
             </div>
 
-            {{-- 3. SK (Dropdown + Input) --}}
+            {{-- 3. SK (Dropdown + Input) - KONSISTEN --}}
             <div class="md:col-span-2 bg-blue-100 p-4 rounded-lg border border-blue-300">
-                <label class="block mb-2 font-bold text-blue-900 text-xs uppercase">UPLOAD SK</label>
+                <label class="mb-2 font-bold text-blue-900 text-xs uppercase flex items-center gap-2">
+                    <i class="fas fa-file-signature"></i> UPLOAD SK KEPEGAWAIAN
+                </label>
                 <div class="flex flex-col md:flex-row gap-2">
                     <select name="doc_jenis_sk" class="md:w-1/4 border border-blue-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-blue-500">
-                        <option value="" disabled {{ !$pegawai->doc_jenis_sk ? 'selected' : '' }}>- Pilih Jenis -</option>
+                        <option value="">- Pilih Jenis SK -</option>
                         @foreach(['SK CPNS', 'SK PNS', 'SK PPPK', 'SK KONTRAK'] as $jenis)
                             <option value="{{ $jenis }}" {{ old('doc_jenis_sk', $pegawai->doc_jenis_sk) == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
                         @endforeach
                     </select>
                     <input type="url" name="doc_link_sk" value="{{ old('doc_link_sk', $pegawai->doc_link_sk) }}" class="flex-1 border border-blue-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500" placeholder="Paste Link Google Drive SK di sini...">
                 </div>
+                @if($pegawai->doc_jenis_sk && $pegawai->doc_link_sk)
+                    <div class="mt-2 text-xs text-blue-700 flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Tersimpan: <strong>{{ $pegawai->doc_jenis_sk }}</strong></span>
+                    </div>
+                @endif
             </div>
 
             {{-- 4. DOKUMEN LAINNYA --}}

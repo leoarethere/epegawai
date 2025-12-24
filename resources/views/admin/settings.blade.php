@@ -12,7 +12,7 @@
         <p class="text-xs text-gray-500">Ubah tampilan halaman login pegawai.</p>
     </div>
 
-    {{-- ALERT SUKSES (Bahasa Indonesia) --}}
+    {{-- ALERT SUKSES --}}
     @if(session('success'))
         <div class="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-6 text-sm border border-green-200 flex items-center shadow-sm">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -39,10 +39,9 @@
         $logoPath = \App\Models\Setting::where('key', 'login_logo')->value('value');
     @endphp
 
-    {{-- Layout sekarang 1 Kolom (Vertikal) --}}
     <div class="flex flex-col gap-8">
         
-        {{-- CARD 1: BACKGROUND (Paling Atas) --}}
+        {{-- CARD 1: BACKGROUND --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -53,7 +52,7 @@
             </div>
             
             <div class="p-6">
-                {{-- Area Preview Besar --}}
+                {{-- Preview --}}
                 <div class="mb-5 relative w-full h-48 rounded-lg overflow-hidden border border-gray-300 bg-gray-800 shadow-inner">
                     <img id="preview-bg" 
                          src="{{ $bgPath ? asset('storage/' . $bgPath) : '' }}" 
@@ -65,11 +64,11 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
+                {{-- FORM UPDATE BACKGROUND --}}
+                <form action="{{ route('admin.settings.update.background') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-medium text-gray-700">Pilih File Baru:</label>
-                        {{-- Added: required & oninvalid --}}
                         <input type="file" name="background_image" id="input-bg" 
                             required
                             oninvalid="this.setCustomValidity('Mohon pilih file gambar background terlebih dahulu!')"
@@ -89,7 +88,7 @@
             </div>
         </div>
 
-        {{-- CARD 2: LOGO (Sekarang di Bawah) --}}
+        {{-- CARD 2: LOGO --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -100,7 +99,7 @@
             </div>
             
             <div class="p-6">
-                {{-- Area Preview Logo --}}
+                {{-- Preview --}}
                 <div class="mb-5 bg-gray-100 rounded-lg border border-gray-300 border-dashed h-40 flex justify-center items-center relative">
                     <img id="preview-logo" 
                          src="{{ $logoPath ? asset('storage/' . $logoPath) : '' }}" 
@@ -111,11 +110,11 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
+                {{-- FORM UPDATE LOGO --}}
+                <form action="{{ route('admin.settings.update.logo') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
                         <label class="block mb-2 text-xs font-medium text-gray-700">Pilih File Baru:</label>
-                        {{-- Added: required & oninvalid --}}
                         <input type="file" name="logo_image" id="input-logo" 
                             required
                             oninvalid="this.setCustomValidity('Mohon pilih file logo terlebih dahulu!')"
@@ -144,18 +143,15 @@
         const previewImg = document.getElementById(previewId);
         const placeholder = document.getElementById(placeholderId);
         
-        // Hapus pesan error validasi jika user sudah memilih file
         input.setCustomValidity('');
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-
             reader.onload = function(e) {
                 previewImg.src = e.target.result;
                 previewImg.classList.remove('hidden');
                 if(placeholder) placeholder.classList.add('hidden');
             }
-
             reader.readAsDataURL(input.files[0]);
         }
     }

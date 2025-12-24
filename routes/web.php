@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\SettingController;
-use App\Http\Middleware\IsAdmin; 
+use App\Http\Controllers\SettingController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +47,6 @@ Route::middleware('auth')->group(function () {
     // ----------------------------------------------------
     // B. AREA KHUSUS ADMIN
     // ----------------------------------------------------
-    // Menggunakan Middleware IsAdmin, Prefix URL '/admin', dan Prefix Nama Route 'admin.'
     Route::middleware(IsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
         
         // 1. Dashboard
@@ -64,9 +63,9 @@ Route::middleware('auth')->group(function () {
         // 3. Pengaturan Tampilan (Background & Logo)
         Route::get('/settings', [SettingController::class, 'index'])->name('settings');
         
-        // Kita gunakan satu route update untuk menangani semua input (Logo & Background)
-        // Pastikan nama method di SettingController adalah 'updateBackground' atau sesuaikan
-        Route::post('/settings', [SettingController::class, 'updateBackground'])->name('settings.update');
+        // --- PERBAIKAN: Pisahkan route update Background dan Logo ---
+        Route::post('/settings/background', [SettingController::class, 'updateBackground'])->name('settings.update.background');
+        Route::post('/settings/logo', [SettingController::class, 'updateLogo'])->name('settings.update.logo');
         
     });
 

@@ -39,41 +39,54 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi
+        // Validasi
         $request->validate([
             'nama_lengkap'   => 'required|string|max:150',
             'nik'            => 'required|numeric|digits:16|unique:users,nik',
             'nip'            => 'nullable|numeric|digits:18|unique:users,nip',
             'email'          => 'required|email|unique:users,email',
-            'status_pegawai' => 'required',
-            'jenis_kelamin'  => 'required',
+            'status_pegawai' => 'required|in:CPNS,PNS,PPPK,KONTRAK',
+            'status_operasional' => 'required|in:Aktif,Non-Aktif',
+            'jenis_kelamin'  => 'required|in:Laki-laki,Perempuan',
             'telepon'        => 'required|numeric',
             'foto_profil'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
             
             // Validasi Dokumen (Format URL)
+            'doc_ktp' => 'nullable|url',
+            'doc_kk' => 'nullable|url',
+            'doc_npwp' => 'nullable|url',
+            'doc_akta_nikah' => 'nullable|url',
+            'doc_akta_anak_folder' => 'nullable|url',
             'doc_folder_ijazah' => 'nullable|url',
-            'doc_link_sk'       => 'nullable|url',
-            'doc_sk_naik_pangkat' => 'nullable|url', // Validasi kolom baru
-            'doc_akta_nikah'    => 'nullable|url',
+            'doc_jenis_sk' => 'nullable|in:SK CPNS,SK PNS,SK PPPK,SK KONTRAK',
+            'doc_link_sk' => 'nullable|url',
+            'doc_sk_naik_pangkat' => 'nullable|url',
+            'doc_sertifikat_diklat' => 'nullable|url',
+            'doc_file_pendukung' => 'nullable|url',
         ], [
-            'nik.digits'       => 'NIK harus berjumlah tepat 16 digit.',
-            'nik.unique'       => 'NIK ini sudah terdaftar.',
-            'nip.digits'       => 'NIP harus berjumlah tepat 18 digit.',
-            'nip.unique'       => 'NIP ini sudah terdaftar.',
-            'telepon.numeric'  => 'Nomor telepon harus berupa angka.',
-            'foto_profil.image'=> 'File harus berupa gambar (jpg/png).',
-            'doc_folder_ijazah.url' => 'Link Ijazah harus berupa URL valid (https://...).',
+            'nik.digits' => 'NIK harus berjumlah tepat 16 digit.',
+            'nik.unique' => 'NIK ini sudah terdaftar.',
+            'nip.digits' => 'NIP harus berjumlah tepat 18 digit.',
+            'nip.unique' => 'NIP ini sudah terdaftar.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'telepon.numeric' => 'Nomor telepon harus berupa angka.',
+            'foto_profil.image' => 'File harus berupa gambar (jpg/png).',
+            'status_pegawai.required' => 'Status pegawai harus dipilih.',
+            'status_pegawai.in' => 'Status pegawai tidak valid.',
+            'status_operasional.required' => 'Status operasional harus dipilih.',
+            '*.url' => 'Format link dokumen harus berupa URL valid (https://...).',
         ]);
 
-        // 2. Upload Foto
+        // Upload Foto
         $pathFoto = null;
         if ($request->hasFile('foto_profil')) {
             $pathFoto = $request->file('foto_profil')->store('profil', 'public');
         }
 
+        // Default Password = NIK
         $defaultPassword = $request->nik; 
 
-        // 3. Simpan Data
+        // Simpan Data
         User::create([
             'nama_lengkap'   => $request->nama_lengkap,
             'nik'            => $request->nik,
@@ -85,7 +98,7 @@ class AdminController extends Controller
             'status_pegawai' => $request->status_pegawai,
             'jabatan'        => $request->jabatan,
             'bagian'         => $request->bagian,
-            'status_operasional' => 'Aktif',
+            'status_operasional' => $request->status_operasional,
             'jenis_kelamin'  => $request->jenis_kelamin,
             'tempat_lahir'   => $request->tempat_lahir,
             'tanggal_lahir'  => $request->tanggal_lahir,
@@ -97,19 +110,19 @@ class AdminController extends Controller
             'doc_ktp'             => $request->doc_ktp,
             'doc_kk'              => $request->doc_kk,
             'doc_npwp'            => $request->doc_npwp,
-            'doc_akta_nikah'      => $request->doc_akta_nikah, // Disimpan
+            'doc_akta_nikah'      => $request->doc_akta_nikah,
             'doc_akta_anak_folder'=> $request->doc_akta_anak_folder, 
             
             'doc_jenis_sk'        => $request->doc_jenis_sk,
             'doc_link_sk'         => $request->doc_link_sk,
-            'doc_sk_naik_pangkat' => $request->doc_sk_naik_pangkat, // Disimpan
+            'doc_sk_naik_pangkat' => $request->doc_sk_naik_pangkat,
 
             'doc_folder_ijazah'   => $request->doc_folder_ijazah,
             'doc_sertifikat_diklat' => $request->doc_sertifikat_diklat,
             'doc_file_pendukung'    => $request->doc_file_pendukung,
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Pegawai Berhasil Ditambahkan');
+        return redirect()->route('admin.dashboard')->with('success', 'Pegawai berhasil ditambahkan! Password default adalah NIK pegawai.');
     }
 
     public function show($id)
@@ -133,9 +146,28 @@ class AdminController extends Controller
             'nik'          => 'required|numeric|digits:16|unique:users,nik,'.$pegawai->id,
             'nip'          => 'nullable|numeric|digits:18|unique:users,nip,'.$pegawai->id,
             'email'        => 'required|email|unique:users,email,'.$pegawai->id,
+            'status_pegawai' => 'required|in:CPNS,PNS,PPPK,KONTRAK',
+            'status_operasional' => 'required|in:Aktif,Non-Aktif',
+            'jenis_kelamin'  => 'required|in:Laki-laki,Perempuan',
             'telepon'      => 'required|numeric',
             'foto_profil'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'password'     => 'nullable|numeric|min:6',
+            
+            // Validasi Dokumen
+            'doc_ktp' => 'nullable|url',
+            'doc_kk' => 'nullable|url',
+            'doc_npwp' => 'nullable|url',
+            'doc_akta_nikah' => 'nullable|url',
+            'doc_akta_anak_folder' => 'nullable|url',
             'doc_folder_ijazah' => 'nullable|url',
+            'doc_jenis_sk' => 'nullable|in:SK CPNS,SK PNS,SK PPPK,SK KONTRAK',
+            'doc_link_sk' => 'nullable|url',
+            'doc_sk_naik_pangkat' => 'nullable|url',
+            'doc_sertifikat_diklat' => 'nullable|url',
+            'doc_file_pendukung' => 'nullable|url',
+        ], [
+            'password.numeric' => 'Password harus berupa angka (PIN).',
+            'password.min' => 'Password minimal 6 digit.',
         ]);
 
         $dataUpdate = [
@@ -170,6 +202,7 @@ class AdminController extends Controller
             'doc_file_pendukung'    => $request->doc_file_pendukung,
         ];
 
+        // Update Foto
         if ($request->hasFile('foto_profil')) {
             if ($pegawai->foto_profil && Storage::disk('public')->exists($pegawai->foto_profil)) {
                 Storage::disk('public')->delete($pegawai->foto_profil);
@@ -179,13 +212,14 @@ class AdminController extends Controller
 
         $pegawai->update($dataUpdate);
 
+        // Update Password jika diisi
         if($request->filled('password')) {
             $pegawai->update([
                 'password' => Hash::make($request->password)
             ]);
         }
 
-        return redirect()->route('admin.dashboard')->with('success', 'Data Pegawai Berhasil Diupdate');
+        return redirect()->route('admin.dashboard')->with('success', 'Data pegawai berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -198,6 +232,6 @@ class AdminController extends Controller
 
         $pegawai->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Pegawai Berhasil Dihapus');
+        return redirect()->route('admin.dashboard')->with('success', 'Data pegawai berhasil dihapus!');
     }
 }

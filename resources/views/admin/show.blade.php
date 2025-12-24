@@ -16,7 +16,7 @@
     <div class="p-6">
         <div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b pb-6 mb-6">
             
-            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl font-bold text-gray-500 uppercase border-4 border-gray-100 shadow-sm overflow-hidden relative flex-shrink-0">
+            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl font-bold text-gray-500 uppercase border-4 border-gray-100 shadow-sm overflow-hidden relative shrink-0">
                 @if($pegawai->foto_profil)
                     <img src="{{ asset('storage/' . $pegawai->foto_profil) }}" class="w-full h-full object-cover">
                 @else
@@ -26,17 +26,18 @@
             
             <div class="text-center md:text-left flex-1">
                 <h1 class="text-3xl font-bold text-gray-800">{{ $pegawai->nama_lengkap }}</h1>
-                <p class="text-lg text-gray-600 mt-1">{{ $pegawai->jabatan }} - {{ $pegawai->bagian }}</p>
-                <div class="mt-3">
+                <p class="text-lg text-gray-600 mt-1">{{ $pegawai->jabatan ?? 'Belum ada jabatan' }} - {{ $pegawai->bagian ?? 'Belum ada bagian' }}</p>
+                <div class="mt-3 flex gap-2 justify-center md:justify-start">
                     @if($pegawai->status_operasional == 'Aktif')
                         <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full border border-green-200">Status: Aktif</span>
                     @else
                         <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full border border-red-200">Status: Non-Aktif</span>
                     @endif
+                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full border border-blue-200">{{ $pegawai->status_pegawai }}</span>
                 </div>
             </div>
 
-            </div>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
 
@@ -59,6 +60,10 @@
                     <div>
                         <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Status Kepegawaian</label>
                         <p class="text-gray-900 font-medium text-base">{{ $pegawai->status_pegawai }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Status Operasional</label>
+                        <p class="text-gray-900 font-medium text-base">{{ $pegawai->status_operasional }}</p>
                     </div>
                 </div>
             </div>
@@ -93,7 +98,7 @@
 
                     <div>
                         <label class="text-xs text-gray-500 uppercase font-bold tracking-wide">Alamat KTP</label>
-                        <p class="text-gray-900 font-medium text-base leading-relaxed">{{ $pegawai->alamat_ktp }}</p>
+                        <p class="text-gray-900 font-medium text-base leading-relaxed">{{ $pegawai->alamat_ktp ?? '-' }}</p>
                     </div>
                 </div>
             </div>
@@ -108,56 +113,77 @@
 
             @php
                 $dokumens = [
-                    'KTP' => 'doc_ktp',
-                    'Kartu Keluarga' => 'doc_kk',
-                    'NPWP' => 'doc_npwp',
-                    'SK CPNS' => 'doc_sk_cpns',
-                    'SK PNS / PPPK' => 'doc_sk_pns', // Konsisten dengan label di form
-                    'SK Kenaikan Pangkat' => 'doc_sk_naik_pangkat',
-                    'Akta Kelahiran' => 'doc_akta_kelahiran',
-                    'Akta Nikah' => 'doc_akta_nikah',
-                    'Folder Akta Anak' => 'doc_akta_anak_folder',
-                    'Ijazah SD' => 'doc_ijazah_sd',
-                    'Ijazah SMP' => 'doc_ijazah_smp',
-                    'Ijazah SMA' => 'doc_ijazah_sma',
-                    'Ijazah D1' => 'doc_ijazah_d1',
-                    'Ijazah D3' => 'doc_ijazah_d3',
-                    'Ijazah S1 / D4' => 'doc_ijazah_s1',
-                    'Ijazah S2' => 'doc_ijazah_s2',
-                    'Ijazah S3' => 'doc_ijazah_s3',
-                    'Sertifikat Diklat' => 'doc_sertifikat_diklat',
-                    'File Pendukung' => 'doc_file_pendukung',
+                    'KTP' => ['field' => 'doc_ktp', 'icon' => 'fa-id-card'],
+                    'Kartu Keluarga' => ['field' => 'doc_kk', 'icon' => 'fa-users'],
+                    'NPWP' => ['field' => 'doc_npwp', 'icon' => 'fa-file-invoice'],
+                    'Akta Nikah' => ['field' => 'doc_akta_nikah', 'icon' => 'fa-heart'],
+                    'Folder Akta Anak' => ['field' => 'doc_akta_anak_folder', 'icon' => 'fa-folder'],
+                    'Folder Ijazah' => ['field' => 'doc_folder_ijazah', 'icon' => 'fa-graduation-cap'],
+                    'SK Kenaikan Pangkat' => ['field' => 'doc_sk_naik_pangkat', 'icon' => 'fa-arrow-up'],
+                    'Sertifikat Diklat' => ['field' => 'doc_sertifikat_diklat', 'icon' => 'fa-certificate'],
+                    'File Pendukung' => ['field' => 'doc_file_pendukung', 'icon' => 'fa-paperclip'],
                 ];
             @endphp
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                @foreach($dokumens as $label => $field)
+                @foreach($dokumens as $label => $data)
                     <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[100px]">
                         <div>
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Dokumen</p>
-                            <h4 class="font-bold text-gray-700 text-sm leading-tight">{{ $label }}</h4>
+                            <h4 class="font-bold text-gray-700 text-sm leading-tight flex items-center gap-2">
+                                <i class="fas {{ $data['icon'] }} text-blue-600"></i>
+                                {{ $label }}
+                            </h4>
                         </div>
                         
                         <div class="mt-4">
-                            @if(!empty($pegawai->$field))
-                                <a href="{{ $pegawai->$field }}" target="_blank" class="block-w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-3 rounded transition flex items-center justify-center gap-1.5">
+                            @if(!empty($pegawai->{$data['field']}))
+                                <a href="{{ $pegawai->{$data['field']} }}" target="_blank" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-3 rounded transition flex items-center justify-center gap-1.5">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                     Buka File
                                 </a>
                             @else
                                 <span class="block w-full text-center bg-gray-200 text-gray-400 text-[11px] font-bold py-1.5 px-3 rounded cursor-not-allowed">
-                                    Kosong
+                                    Belum Upload
                                 </span>
                             @endif
                         </div>
                     </div>
                 @endforeach
+                
+                {{-- SK KEPEGAWAIAN - CARD KHUSUS DENGAN HIGHLIGHT --}}
+                @if($pegawai->doc_jenis_sk || $pegawai->doc_link_sk)
+                    <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[100px]">
+                        <div>
+                            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i class="fas fa-star text-xs"></i> SK Kepegawaian
+                            </p>
+                            <h4 class="font-bold text-blue-900 text-sm leading-tight flex items-center gap-2">
+                                <i class="fas fa-file-signature text-blue-600"></i>
+                                {{ $pegawai->doc_jenis_sk ?? 'SK Kepegawaian' }}
+                            </h4>
+                        </div>
+                        
+                        <div class="mt-4">
+                            @if($pegawai->doc_link_sk)
+                                <a href="{{ $pegawai->doc_link_sk }}" target="_blank" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-3 rounded transition flex items-center justify-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    Buka File
+                                </a>
+                            @else
+                                <span class="block w-full text-center bg-gray-200 text-gray-400 text-[11px] font-bold py-1.5 px-3 rounded cursor-not-allowed">
+                                    Belum Upload
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
         <div class="mt-10 pt-6 border-t text-sm text-gray-400 flex justify-between bg-gray-50 -mx-6 -mb-6 px-6 py-4">
-            <span>Terdaftar sejak: {{ $pegawai->created_at->format('d M Y') }}</span>
-            <span>Terakhir diupdate: {{ $pegawai->updated_at->format('d M Y') }}</span>
+            <span>Terdaftar sejak: {{ $pegawai->created_at->format('d M Y, H:i') }} WIB</span>
+            <span>Terakhir diupdate: {{ $pegawai->updated_at->format('d M Y, H:i') }} WIB</span>
         </div>
 
     </div>
