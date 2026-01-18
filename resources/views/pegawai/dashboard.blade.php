@@ -32,7 +32,6 @@
         
         <div class="max-w-5xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mb-10">
             
-            <!-- Header Profile -->
             <div class="bg-linear-to-r from-blue-600 to-blue-700 px-6 py-8 text-center md:text-left md:flex md:items-center gap-6">
                 <div class="mx-auto md:mx-0 w-28 h-28 bg-white rounded-full flex items-center justify-center text-4xl font-bold text-blue-800 uppercase border-4 border-white shadow-lg overflow-hidden relative shrink-0">
                     @if($user->foto_profil)
@@ -42,20 +41,19 @@
                     @endif
                 </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-white mb-1">{{ $user->nama_lengkap }}</h1>
-                    <p class="text-blue-100 text-lg mb-2">{{ $user->jabatan ?? 'Belum ada jabatan' }} - {{ $user->bagian ?? 'Belum ada bagian' }}</p>
+                    <h1 class="text-3xl font-bold text-blue-700 mb-1">{{ $user->nama_lengkap }}</h1>
+                    <p class="text-blue-700 text-lg mb-2">{{ $user->jabatan ?? 'Belum ada jabatan' }} - {{ $user->bagian ?? 'Belum ada bagian' }}</p>
                     <div class="flex gap-2 justify-center md:justify-start">
                         @if($user->status_operasional == 'Aktif')
                             <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">Status: Aktif</span>
                         @else
-                            <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">Status: Non-Aktif</span>
+                            <span class="bg-red-500 text-blue-400 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Status: Non-Aktif</span>
                         @endif
-                        <span class="bg-white text-blue-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">{{ $user->status_pegawai }}</span>
+                        <span class="bg-gray-200 text-blue-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">{{ $user->status_pegawai }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Data Section -->
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 border-b">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3 flex items-center gap-2">
@@ -105,7 +103,6 @@
                 </div>
             </div>
 
-            <!-- Documents Section -->
             <div class="px-6 py-6 bg-gray-50/50">
                 <h3 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
                     <i class="fas fa-folder-open text-blue-600"></i> Arsip Dokumen Digital
@@ -151,42 +148,41 @@
                         </div>
                     @endforeach
                     
-                    {{-- SK KEPEGAWAIAN - CARD KHUSUS DENGAN HIGHLIGHT --}}
-                    @if($user->doc_jenis_sk || $user->doc_link_sk)
-                        <div class="bg-linear-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                                        <i class="fas fa-star text-xs"></i> SK Kepegawaian
-                                    </p>
-                                    <h4 class="font-bold text-blue-900 text-sm leading-tight flex items-center gap-2">
-                                        <i class="fas fa-file-signature text-blue-600"></i>
-                                        {{ $user->doc_jenis_sk ?? 'SK Kepegawaian' }}
-                                    </h4>
-                                    @if($user->doc_jenis_sk)
-                                        <p class="text-[10px] text-blue-600 mt-1">
-                                            <i class="fas fa-info-circle"></i> Dokumen resmi kepegawaian
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                @if($user->doc_link_sk)
-                                    <a href="{{ $user->doc_link_sk }}" target="_blank" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded transition items-center justify-center gap-2 shadow-sm">
-                                        <i class="fas fa-external-link-alt"></i> Lihat / Download
-                                    </a>
-                                @else
-                                    <button disabled class="block w-full text-center bg-gray-100 text-gray-400 text-xs font-bold py-2 px-4 rounded cursor-not-allowed border border-gray-200">
-                                        Belum Tersedia
-                                    </button>
-                                @endif
+                    {{-- SK KEPEGAWAIAN (Updated: Netral Style) --}}
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    DOKUMEN
+                                </p>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight flex items-center gap-2">
+                                    <i class="fas fa-file-signature text-blue-600"></i>
+                                    SK Kepegawaian
+                                </h4>
+                                <p class="text-[10px] text-gray-400 mt-1">
+                                    Dokumen resmi (CPNS/PNS/PPPK)
+                                </p>
                             </div>
                         </div>
-                    @endif
+                        <div class="mt-4">
+                            @if(!empty($user->doc_link_sk))
+                                <a href="{{ $user->doc_link_sk }}" target="_blank" class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded transition items-center justify-center gap-2 shadow-sm">
+                                    <i class="fas fa-external-link-alt"></i> Lihat / Download
+                                </a>
+                            @else
+                                <button disabled class="block w-full text-center bg-gray-100 text-gray-400 text-xs font-bold py-2 px-4 rounded cursor-not-allowed border border-gray-200">
+                                    Belum Tersedia
+                                </button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Archive Link (if exists) -->
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative text-center" role="alert">
+                <span class="block sm:inline text-sm">Silahkan hubungi admin jika ada kesalahan data pegawai</span>
+            </div>
+
             @if($user->link_dokumen)
             <div class="bg-yellow-50 p-4 border-t text-center">
                 <p class="text-sm text-gray-600 mb-2">
@@ -201,7 +197,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="bg-white border-t py-6 mt-auto">
         <div class="text-center space-y-2">
             <p class="text-xs text-gray-400 font-medium">

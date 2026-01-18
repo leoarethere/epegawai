@@ -27,10 +27,10 @@
             @if($bgImage)
                 <img src="{{ $bgImage }}" class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 hover:scale-105">
             @else
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-900"></div>
+                <div class="absolute inset-0 bg-linear-to-br from-blue-900 to-slate-900"></div>
             @endif
             
-            <div class="absolute inset-0 bg-gradient-to-t from-blue-950/95 via-blue-900/60 to-blue-900/10"></div>
+            <div class="absolute inset-0 bg-linear-to-t from-blue-950/95 via-blue-900/60 to-blue-900/10"></div>
 
             <div class="relative z-10 p-16 w-full text-white">
                 
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="flex items-center text-sm text-blue-200/80 font-normal border-t border-blue-500/30 pt-6 max-w-lg">
-                    <svg class="w-5 h-5 mr-3 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-3 text-yellow-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
@@ -115,6 +115,12 @@
                             <input id="password" name="password" type="password" required 
                                 class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-sm font-medium placeholder-gray-400" 
                                 placeholder="Masukkan Kata Sandi">
+                        </div>
+                    </div>
+
+                    <div class="mb-12 text-center">
+                        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+                            <span class="block sm:inline text-sm">Silahkan hubungi admin jika mengalami kendala saat login</span>
                         </div>
                     </div>
 

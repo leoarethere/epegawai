@@ -8,7 +8,6 @@
         <div>
             <h2 class="text-xl font-bold text-gray-800 mb-1">Form Edit Data Pegawai</h2>
             <div class="flex flex-col">
-                <span class="text-xs text-gray-800 uppercase tracking-wider font-bold">Sedang Mengubah Data:</span>
                 <span class="text-3xl font-extrabold text-blue-700 mt-1">{{ $pegawai->nama_lengkap }}</span>
             </div>
         </div>
@@ -210,26 +209,13 @@
                 </div>
             </div>
 
-            {{-- 3. SK (Dropdown + Input) - KONSISTEN --}}
-            <div class="md:col-span-2 bg-blue-100 p-4 rounded-lg border border-blue-300">
-                <label class="mb-2 font-bold text-blue-900 text-xs uppercase flex items-center gap-2">
-                    <i class="fas fa-file-signature"></i> UPLOAD SK KEPEGAWAIAN
-                </label>
-                <div class="flex flex-col md:flex-row gap-2">
-                    <select name="doc_jenis_sk" class="md:w-1/4 border border-blue-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-blue-500">
-                        <option value="">- Pilih Jenis SK -</option>
-                        @foreach(['SK CPNS', 'SK PNS', 'SK PPPK', 'SK KONTRAK'] as $jenis)
-                            <option value="{{ $jenis }}" {{ old('doc_jenis_sk', $pegawai->doc_jenis_sk) == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
-                        @endforeach
-                    </select>
-                    <input type="url" name="doc_link_sk" value="{{ old('doc_link_sk', $pegawai->doc_link_sk) }}" class="flex-1 border border-blue-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500" placeholder="Paste Link Google Drive SK di sini...">
-                </div>
-                @if($pegawai->doc_jenis_sk && $pegawai->doc_link_sk)
-                    <div class="mt-2 text-xs text-blue-700 flex items-center gap-2">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Tersimpan: <strong>{{ $pegawai->doc_jenis_sk }}</strong></span>
-                    </div>
-                @endif
+            {{-- 3. SK (Disederhanakan tanpa Dropdown) --}}
+            <div class="md:col-span-2">
+                <label class="block mb-1 font-medium text-gray-700 text-sm">Link SK Kepegawaian</label>
+                <input type="url" name="doc_link_sk" value="{{ old('doc_link_sk', $pegawai->doc_link_sk) }}" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" 
+                    placeholder="https://drive.google.com/...">
+                <p class="text-xs text-gray-500 mt-1">Tempelkan link Google Drive SK (CPNS/PNS/PPPK/Kontrak) di sini.</p>
             </div>
 
             {{-- 4. DOKUMEN LAINNYA --}}

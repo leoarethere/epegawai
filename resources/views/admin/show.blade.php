@@ -151,33 +151,31 @@
                     </div>
                 @endforeach
                 
-                {{-- SK KEPEGAWAIAN - CARD KHUSUS DENGAN HIGHLIGHT --}}
-                @if($pegawai->doc_jenis_sk || $pegawai->doc_link_sk)
-                    <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[100px]">
-                        <div>
-                            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                                <i class="fas fa-star text-xs"></i> SK Kepegawaian
-                            </p>
-                            <h4 class="font-bold text-blue-900 text-sm leading-tight flex items-center gap-2">
-                                <i class="fas fa-file-signature text-blue-600"></i>
-                                {{ $pegawai->doc_jenis_sk ?? 'SK Kepegawaian' }}
-                            </h4>
-                        </div>
-                        
-                        <div class="mt-4">
-                            @if($pegawai->doc_link_sk)
-                                <a href="{{ $pegawai->doc_link_sk }}" target="_blank" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-3 rounded transition flex items-center justify-center gap-1.5">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                    Buka File
-                                </a>
-                            @else
-                                <span class="block w-full text-center bg-gray-200 text-gray-400 text-[11px] font-bold py-1.5 px-3 rounded cursor-not-allowed">
-                                    Belum Upload
-                                </span>
-                            @endif
-                        </div>
+                {{-- SK KEPEGAWAIAN (Updated: Netral Style) --}}
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 flex flex-col justify-between min-h-[100px]">
+                    <div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                            DOKUMEN
+                        </p>
+                        <h4 class="font-bold text-gray-700 text-sm leading-tight flex items-center gap-2">
+                            <i class="fas fa-file-signature text-blue-600"></i>
+                            SK Kepegawaian
+                        </h4>
                     </div>
-                @endif
+                    
+                    <div class="mt-4">
+                        @if(!empty($pegawai->doc_link_sk))
+                            <a href="{{ $pegawai->doc_link_sk }}" target="_blank" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-3 rounded transition flex items-center justify-center gap-1.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                Buka File
+                            </a>
+                        @else
+                            <span class="block w-full text-center bg-gray-200 text-gray-400 text-[11px] font-bold py-1.5 px-3 rounded cursor-not-allowed">
+                                Belum Upload
+                            </span>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
 
